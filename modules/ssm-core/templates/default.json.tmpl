@@ -1,0 +1,64 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "ssm:UpdateInstanceInformation",
+                "ssm:UpdateInstanceAssociationStatus",
+                "ssm:UpdateAssociationStatus",
+                "ssm:PutInventory",
+                "ssm:PutConfigurePackageResult",
+                "ssm:PutComplianceItems",
+                "ssm:ListInstanceAssociations",
+                "ssm:ListAssociations",
+                "ssm:GetManifest",
+                "ssm:GetDocument",
+                "ssm:GetDeployablePatchSnapshotForInstance",
+                "ssm:DescribeDocument",
+                "ssm:DescribeAssociation"
+            ],
+            "Effect": "Allow",
+            "Resource": "*",
+            "Sid": ""
+        },
+        {
+            "Action": [
+                "ssmmessages:OpenDataChannel",
+                "ssmmessages:OpenControlChannel",
+                "ssmmessages:CreateDataChannel",
+                "ssmmessages:CreateControlChannel"
+            ],
+            "Effect": "Allow",
+            "Resource": "*",
+            "Sid": ""
+        },
+        {
+            "Action": [
+                "ec2messages:SendReply",
+                "ec2messages:GetMessages",
+                "ec2messages:GetEndpoint",
+                "ec2messages:FailMessage",
+                "ec2messages:DeleteMessage",
+                "ec2messages:AcknowledgeMessage"
+            ],
+            "Effect": "Allow",
+            "Resource": "*",
+            "Sid": ""
+        },
+        {
+            "Action": "kms:Decrypt",
+            "Effect": "Allow",
+            "Resource": "${kmskey_arn}",
+            "Sid": ""
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetEncryptionConfiguration"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+
+

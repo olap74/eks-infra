@@ -1,0 +1,270 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "camEksWorkerGlue",
+            "Effect": "Allow",
+            "Action": [
+                "glue:StartJobRun",
+                "glue:StartCrawler",
+                "glue:GetWorkflow",
+                "glue:GetTable*",
+                "glue:GetTable",
+                "glue:GetPartition*",
+                "glue:GetPartition",
+                "glue:GetJobRun",
+                "glue:GetJob",
+                "glue:GetCrawler",
+                "glue:DeleteWorkflow",
+                "glue:DeleteTrigger",
+                "glue:DeleteJob",
+                "glue:CreateWorkflow",
+                "glue:CreateTrigger",
+                "glue:CreateJob"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "camEksWorkerIamSts",
+            "Effect": "Allow",
+            "Action": "sts:AssumeRole",
+            "NotResource": "arn:${partition}:iam::${account}:role/*"
+        },
+        {
+            "Sid": "camEksWorkerIamPassRole",
+            "Effect": "Allow",
+            "Action": "iam:PassRole",
+            "Resource": [
+                "arn:${partition}:iam::${account}:role/CAM_AmazonSageMaker-ExecutionRole",
+                "arn:${partition}:iam::${account}:role/CAM_AWS_Glue_Role",
+                "arn:${partition}:iam::${account}:role/AmazonSageMaker-ExecutionRole"
+            ]
+        },
+        {
+            "Sid": "camEksWorkerIamCreateDeleteRoles",
+            "Effect": "Allow",
+            "Action": [
+                "iam:DeleteRole",
+                "iam:CreateRole"
+            ],
+            "Resource": "arn:${partition}:iam::${account}:role/cam-iiq-*"
+        },
+        {
+            "Sid": "camEksWorkerSagemaker",
+            "Effect": "Allow",
+            "Action": [
+                "sagemaker:WaitUntilTrainingJobCompletedOrStopped",
+                "sagemaker:DescribeTrainingJob",
+                "sagemaker:CreateTrainingJob"
+            ],
+            "Resource": "arn:${partition}:sagemaker:${region}:${account}:training-job/*"
+        },
+        {
+            "Sid": "camEksWorkerSes",
+            "Effect": "Allow",
+            "Action": "ses:SendEmail",
+            "Resource": "*"
+        },
+        {
+            "Sid": "camEksWorkerSns",
+            "Effect": "Allow",
+            "Action": [
+                "sns:Unsubscribe",
+                "sns:Subscribe",
+                "sns:ListSubscriptions"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "dynamodbAccess",
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:PutItem",
+                "dynamodb:DeleteItem"
+            ],
+            "Resource": "arn:${partition}:dynamodb:${region}:${account}:table/prometheus-${region}-service-discovery"
+        },
+        {
+            "Sid": "dynamodbOrgAccess",
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:Scan",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:DescribeTable",
+                "dynamodb:ConditionCheckItem",
+                "dynamodb:BatchGetItem"
+            ],
+            "Resource": [
+                "arn:${partition}:dynamodb:${region}:${account}:table/org/index/*",
+                "arn:${partition}:dynamodb:${region}:${account}:table/org"
+            ]
+        },
+        {
+            "Sid": "camEksWorkerCognito",
+            "Effect": "Allow",
+            "Action": [
+                "cognito-idp:ListUsers",
+                "cognito-idp:ListUserPoolClients",
+                "cognito-idp:ConfirmSignUp",
+                "cognito-idp:AdminUpdateUserAttributes",
+                "cognito-idp:AdminSetUserMFAPreference",
+                "cognito-idp:AdminDeleteUser",
+                "cognito-idp:AdminCreateUser"
+            ],
+            "Resource": "arn:${partition}:cognito-idp:${region}:${account}:userpool/${cognito_userpool}"
+        },
+        {
+            "Sid": "camEksListUserPools",
+            "Effect": "Allow",
+            "Action": "cognito-idp:ListUserPools",
+            "Resource": "*"
+        },
+        {
+            "Sid": "camEksWorkerRds",
+            "Effect": "Allow",
+            "Action": [
+                "rds:DescribeDBSubnetGroups",
+                "rds:DescribeDBClusters",
+                "rds:DescribeDBClusterParameters"
+            ],
+            "Resource": [
+                "arn:${partition}:rds:${region}:${account}:subgrp:cam-*",
+                "arn:${partition}:rds:${region}:${account}:cluster:cam-*",
+                "arn:${partition}:rds:${region}:${account}:cluster-pg:cam-*"
+            ]
+        },
+        {
+            "Sid": "camEksWorkerS3",
+            "Effect": "Allow",
+            "Action": [
+                "s3:PutObject",
+                "s3:ListBucket",
+                "s3:GetObject",
+                "s3:DeleteObject",
+                "s3:GetObjectTagging",
+                "s3:PutObjectTagging"
+            ],
+            "Resource": [
+                "arn:${partition}:s3:::${s3_prefix}-*/",
+                "arn:${partition}:s3:::${s3_prefix}-*"
+            ]
+        },
+        {
+            "Sid": "camEksWorkerSecretsManager",
+            "Effect": "Allow",
+            "Action": "secretsmanager:GetSecretValue",
+            "Resource": "arn:${partition}:secretsmanager:${region}:${account}:secret:cam/*"
+        },
+        {
+            "Sid": "camEksSecretsManagerSpTenant",
+            "Effect": "Allow",
+            "Action": "secretsmanager:GetSecretValue",
+            "Resource": "arn:${partition}:secretsmanager:${region}:${account}:secret:/service/sp-tenant/client_keys*"
+        },
+        {
+            "Sid": "camEksWorkerSqs",
+            "Effect": "Allow",
+            "Action": [
+                "sqs:SetQueueAttributes",
+                "sqs:SendMessageBatch",
+                "sqs:SendMessage",
+                "sqs:ReceiveMessage",
+                "sqs:PurgeQueue",
+                "sqs:GetQueueUrl",
+                "sqs:GetQueueAttributes",
+                "sqs:DeleteQueue",
+                "sqs:DeleteMessageBatch",
+                "sqs:DeleteMessage",
+                "sqs:CreateQueue"
+            ],
+            "Resource": "arn:${partition}:sqs:${region}:${account}:cam-*"
+        },
+        {
+            "Sid": "camEksWorkerLogsSqs",
+            "Effect": "Allow",
+            "Action": [
+                "sqs:SendMessageBatch",
+                "sqs:SendMessage",
+                "sqs:GetQueueUrl",
+                "sqs:GetQueueAttributes"
+            ],
+            "Resource": "arn:${partition}:sqs:${region}:${account}:log*"
+        },
+        {
+            "Sid": "camEksMWAA",
+            "Effect": "Allow",
+            "Action": [
+                "airflow:CreateCliToken"
+            ],
+            "Resource": "arn:${partition}:airflow:${region}:${account}:environment/cam-*"
+        },
+        {
+            "Sid": "camEksStepfunction",
+            "Effect": "Allow",
+            "Action": [
+                "states:*"
+            ],
+            "Resource": [
+                "arn:${partition}:states:*:*:stateMachine:cam-*",
+                "arn:${partition}:states:*:*:execution:cam-*:*"
+            ]
+        },
+        {
+            "Sid": "camEksStepfunctionIAMPassrole",
+            "Effect": "Allow",
+            "Action": [
+                "iam:PassRole"
+            ],
+            "Resource": "arn:${partition}:iam::${account}:role/${eks_cluster_name}StepFunction-ExecutionRole"
+        },
+        {
+            "Sid": "camEksfirehoseDeliveryIAMPassrole",
+            "Effect": "Allow",
+            "Action": [
+                "iam:PassRole"
+            ],
+            "Resource": "arn:${partition}:iam::${account}:role/${eks_cluster_name}-firehose-deliveryRole"
+        },
+        {
+            "Sid": "camEksWorkerFirehose",
+            "Effect": "Allow",
+            "Action": [
+                "firehose:CreateDeliveryStream",
+                "firehose:DeleteDeliveryStream",
+                "firehose:DescribeDeliveryStream",
+                "firehose:PutRecord",
+                "firehose:PutRecordBatch",
+                "firehose:UpdateDestination",
+                "firehose:TagDeliveryStream",
+                "firehose:UntagDeliveryStream"
+            ],
+            "Resource": "arn:${partition}:firehose:${region}:${account}:deliverystream/cam-*"
+        },
+        {
+            "Sid": "camDDBTablesAccess",
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:BatchGetItem",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:PartiQLUpdate",
+                "dynamodb:Scan",
+                "dynamodb:ListTagsOfResource",
+                "dynamodb:Query",
+                "dynamodb:UpdateItem",
+                "dynamodb:PartiQLSelect",
+                "dynamodb:DescribeTable",
+                "dynamodb:PartiQLInsert",
+                "dynamodb:GetItem",
+                "dynamodb:ListStreams",
+                "dynamodb:PartiQLDelete"
+            ],
+            "Resource": [
+                "arn:${partition}:dynamodb:${region}:${account}:table/cam-*",
+                "arn:${partition}:dynamodb:${region}:${account}:table/cam-*/index/*"
+            ]
+        }
+    ]
+}
